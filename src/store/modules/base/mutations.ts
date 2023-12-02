@@ -42,4 +42,7 @@ export default {
   setToken(state: Type.Object, token: string) {
     state.token = token
   },
+  setEncryptionToken(state: Type.Object, token: string) {
+    state.encryptionToken = token
+  },
 }

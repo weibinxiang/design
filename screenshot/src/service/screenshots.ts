@@ -56,7 +56,7 @@ module.exports = {
      * @apiParam {String} size 可选, 按比例缩小到宽度
      * @apiParam {String} quality 可选, 质量
      */
-    let { id, tempid, tempType, width, height, screenshot_url, type = 'file', size, quality } = req.query
+    let { id, tempid, tempType, width, height, screenshot_url, type = 'file', size, quality, t } = req.query
     const url = (screenshot_url || drawLink) + `${id ? '?id=' : '?tempid='}`
     id = id || tempid
     const path = filePath + `${id}-screenshot.png`
@@ -69,7 +69,7 @@ module.exports = {
       }
       const targetUrl = url + id + `${tempType ? '&tempType=' + tempType : ''}`
 
-      queueRun(saveScreenshot, targetUrl, { width, height, path, thumbPath, size, quality })
+      queueRun(saveScreenshot, targetUrl, { width, height, path, thumbPath, size, quality, t })
         .then(() => {
           res.setHeader('Content-Type', 'image/jpg')
           // const stats = fs.statSync(path)

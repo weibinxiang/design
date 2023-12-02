@@ -118,10 +118,10 @@ export default defineComponent({
         ...Object.assign(pageOptions, { cate: state.currentCategory?.id }),
       })
       if (init) {
-        state.list = res?.list
+        state.list = res?.data.data
       } else {
         res?.list.length <= 0 && (state.loadDone = true)
-        state.list = state.list.concat(res?.list)
+        state.list = state.list.concat(res?.data.data)
       }
       setTimeout(() => {
         state.loading = false

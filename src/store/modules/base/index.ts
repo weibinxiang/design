@@ -22,6 +22,7 @@ const all = {
     fonts: [], // 缓存字体列表
     app: null, // 抠图服务
     token: '',
+    encryptionToken: '',
   },
   getters: {
     online: (state: Type.Object) => {

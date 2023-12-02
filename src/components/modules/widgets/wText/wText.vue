@@ -118,7 +118,6 @@ export default {
         let font = nval.fontClass
         const isDone = font.value === this.loadFontDone
         if (font.url && !isDone) {
-          console.log(font.value, font.id, this.isDraw)
           if (font.id && this.isDraw) {
             this.loading = false
             return

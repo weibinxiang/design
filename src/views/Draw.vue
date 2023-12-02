@@ -47,13 +47,14 @@ export default defineComponent({
     async load() {
       let loadFlag = false
       const { id, tempid, tempType: type } = this.$route.query
+      console.log(tempid)
       if (id || tempid) {
         const {
           data: { data, width, height },
         } = await api.home[id ? 'getWorks' : 'getTempDetail']({ id: id || tempid, type })
+
         const content = JSON.parse(data)
         const widgets = type == 1 ? content : content.widgets
-
         if (type == 1) {
           this.dPage.width = width
           this.dPage.height = height

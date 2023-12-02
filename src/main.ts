@@ -30,13 +30,14 @@ elementConfig.plugins.forEach((plugin: any) => {
 try {
   const search = window.location.search.substr(1) || ''
   const query = new URLSearchParams(search)
-  const key = query.get('t') || JSON.parse(localStorage.getItem('DESIGN_INFO') || '')?.token
+  const key = query.get('t') || JSON.parse(localStorage.getItem('DESIGN_INFO') || '{}')?.token
   if (query.get('t')) {
     localStorage.setItem('DESIGN_INFO', JSON.stringify({ token: query.get('t') }))
   }
   const t = window.atob(decodeURIComponent(key))
   const token = CryptoJS.AES.decrypt(t, 'O+gm1/AXCp1ERKJko3jOGw==').toString(CryptoJS.enc.Utf8)
   store.commit('setToken', token || '')
+  store.commit('setEncryptionToken', key || '')
 } catch {}
 
 app.use(store).use(router).use(utils).mount('#app')

@@ -13,6 +13,8 @@ import CryptoJS from 'crypto-js'
 import Base64 from 'crypto-js/enc-base64'
 import MD5 from 'crypto-js/md5'
 import Utf8 from 'crypto-js/enc-utf8'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import type { Action } from 'element-plus'
 
 const signKey = 'O+gm1/AXCp1ERKJko3jOGw=='
 const aseKey = '12345678'
@@ -35,6 +37,7 @@ axios.interceptors.request.use(
     // values.access_token = access_token;
     // values.version = version;
     config.headers.token = store.state.token
+    console.log('ss', store.state.token)
 
     if (url.indexOf('http://') !== 0 && url.indexOf('https://') !== 0) {
       url.indexOf('/') === 0 ? (config.url = baseUrl + url) : (config.url = baseUrl + '/' + url)
@@ -94,16 +97,25 @@ axios.interceptors.response.use(
       return Promise.reject(res)
     }
     // console.log(res.headers.authorization);
-    if (res.data.code === 401) {
-      console.log('登录失效')
+    if ([3216002, 3003, 3002].includes(res.data.code)) {
+      ElMessageBox.alert('请重新登录', '登录超时', {
+        confirmButtonText: '确认',
+        type: 'warning',
+        callback: (action: Action) => {
+          if (action === 'confirm') {
+            window.parent?.postMessage('请重新登录', '*')
+          }
+        },
+      })
       store.commit('changeOnline', false)
     }
 
-    if (res.data.result && res.data.code === 200) {
-      return Promise.resolve(res.data.result)
-    } else if (res.data.data && res.data.stat == 1) {
-      return Promise.resolve(res.data.data)
-    } else {
+    // if (res.data.result && res.data.code === 200) {
+    //   return Promise.resolve(res.data.result)
+    // } else if (res.data.data && res.data.stat == 1) {
+    //   return Promise.resolve(res.data.data)
+    // } else
+    if (res.data && res.data.code === 200) {
       return Promise.resolve(res.data)
     }
   },
