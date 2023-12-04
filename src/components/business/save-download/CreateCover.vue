@@ -13,8 +13,10 @@
 import { defineComponent, reactive, toRefs, watch, getCurrentInstance, ComponentInternalInstance } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import html2canvas from 'html2canvas'
-import api from '@/api'
-import Qiniu from '@/common/methods/QiNiu'
+import uploadImage from '@/utils/upload'
+import { HuaweiType, FileType } from '@/api/upload'
+import { randomString } from '@/utils/utils'
+import dayjs from 'dayjs'
 
 export default defineComponent({
   props: ['modelValue'],
@@ -40,11 +42,12 @@ export default defineComponent({
         html2canvas(document.getElementById('clone-page'), opts).then((canvas: any) => {
           canvas.toBlob(
             async (blobObj: Blob) => {
-              const result: any = await Qiniu.upload(blobObj, { bucket: 'xp-design', prePath: 'cover/user' })
+              const file = new File([blobObj], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${blobObj.type.split('/')[1]}`)
+              const result = await uploadImage(file, { type: HuaweiType.other, number: FileType.image })
               cb(result)
             },
             'image/jpeg',
-            0.15,
+            0.3,
           )
           proxy?.updateZoom(nowZoom)
           clonePage.remove()

@@ -117,6 +117,7 @@ export default defineComponent({
 
     async function clear() {
       store.commit('setDWidgets', [])
+      store.commit('setBasicInfo', undefined)
       store.commit('setDPage', Object.assign(store.getters.dPage, { width: 1920, height: 1080, backgroundColor: '#ffffff', backgroundImage: '' }))
       store.commit('setShowMoveable', false)
       await nextTick()

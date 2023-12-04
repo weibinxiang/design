@@ -21,6 +21,11 @@ import SaveImage from '@/components/business/save-download/CreateCover.vue'
 import { useFontStore } from '@/common/methods/fonts'
 import _config from '@/config'
 import github from '@/api/github'
+import uploadImage from '@/utils/upload'
+import { HuaweiType, FileType } from '@/api/upload'
+import { base64ToFile, randomString } from '@/utils/utils'
+import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
 
 export default defineComponent({
   components: { SaveImage },
@@ -43,8 +48,8 @@ export default defineComponent({
     // 生成封面
     const draw = () => {
       return new Promise((resolve) => {
-        state.canvasImage.createCover(({ key }: any) => {
-          resolve(_config.IMG_URL + key)
+        state.canvasImage.createCover((url) => {
+          resolve(url)
         })
       })
     }
@@ -57,6 +62,14 @@ export default defineComponent({
     let page: any = {}
 
     async function prepare() {
+      if (!store.state.design.basicInfo.title) {
+        ElMessage.warning('请先在模板信息中填写模板标题')
+        return
+      }
+      if (!store.state.design.basicInfo.title) {
+        ElMessage.warning('请先在模板信息中选择模板分类')
+        return
+      }
       store.commit('setShowMoveable', false) // 清理掉上一次的选择框
       addition = 0
       lenCount = 0
@@ -65,7 +78,8 @@ export default defineComponent({
 
       if (page.backgroundImage) {
         context.emit('change', { downloadPercent: 1, downloadText: '正在准备上传', downloadMsg: '请等待..' })
-        page.backgroundImage = await github.putPic(page.backgroundImage.split(',')[1])
+        const file = base64ToFile(page.backgroundImage, `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}`)
+        page.backgroundImage = await uploadImage(file, { type: HuaweiType.other, number: FileType.image })
       }
 
       for (const item of widgets) {
@@ -79,27 +93,50 @@ export default defineComponent({
     }
 
     async function uploadImgs() {
-      if (queue.length > 0) {
-        const item = queue.pop()
-        const url = await github.putPic(item.imgUrl.split(',')[1])
-        addition += item.imgUrl.length
-        let downloadPercent: any = (addition / lenCount) * 100
-        downloadPercent >= 100 && (downloadPercent = null)
-        context.emit('change', { downloadPercent, downloadText: '上传资源中', downloadMsg: `已完成：${lens - queue.length} / ${lens}` })
-        item.imgUrl = url
-        uploadImgs()
-      } else {
-        uploadTemplate()
-      }
+      try {
+        if (queue.length > 0) {
+          const item = queue.pop()
+          const file = base64ToFile(item.imgUrl, `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}`)
+          const url = await uploadImage(file, { type: HuaweiType.other, number: FileType.image })
+          addition += item.imgUrl.length
+          let downloadPercent: any = (addition / lenCount) * 100
+          if (!url) {
+            context.emit('change', { downloadPercent: downloadPercent, downloadText: '上传资源中失败', downloadMsg: '' })
+            setTimeout(() => {
+              context.emit('change', { downloadPercent: 0, downloadText: '上传资源失败', downloadMsg: '' })
+            }, 2000)
+            return
+          }
+          downloadPercent >= 100 && (downloadPercent = null)
+          context.emit('change', { downloadPercent, downloadText: '上传资源中', downloadMsg: `已完成：${lens - queue.length} / ${lens}` })
+          item.imgUrl = url
+          uploadImgs()
+        } else {
+          uploadTemplate()
+        }
+      } catch {}
     }
 
     const uploadTemplate = async () => {
       context.emit('change', { downloadPercent: 95, downloadText: '正在处理封面', downloadMsg: '即将结束...' })
       const cover = await draw()
-      const { id, stat, msg } = await api.home.saveWorks({ cover, title: '自设计模板', data: JSON.stringify({ page, widgets }), width: page.width, height: page.height })
-      stat !== 0 ? useNotification('保存成功', '可在"我的模板"中查看') : useNotification('保存失败', msg, { type: 'error' })
-      router.push({ path: '/psd', query: { id }, replace: true })
-      context.emit('change', { downloadPercent: 99.99, downloadText: '上传完成', cancelText: '查看我的作品' }) // 关闭弹窗
+      const {
+        code,
+        data: { id },
+        msg,
+      } = await api.home.saveWorks({ category: store.state.basicInfo.category, cover, title: store.state.design.basicInfo.title, data: JSON.stringify({ page, widgets }), width: page.width, height: page.height }).catch((res) => res)
+      if (code === 200) {
+        // useNotification('保存成功', '可在"我的模板"中查看')
+        router.push({ path: '/psd', query: { id }, replace: true })
+        context.emit('change', { downloadPercent: 99.99, downloadText: '上传完成', cancelText: '查看我的作品' }) // 关闭弹窗
+      } else {
+        useNotification('保存失败', msg, { type: 'error' })
+
+        context.emit('change', { downloadPercent: 99.99, downloadText: '保存失败', downloadMsg: msg }) // 关闭弹窗
+        setTimeout(() => {
+          context.emit('change', { downloadPercent: 0, downloadText: '保存失败', downloadMsg: '' }) // 关闭弹窗
+        }, 2000)
+      }
     }
 
     return {

@@ -185,7 +185,8 @@ export default defineComponent({
     },
     async dragStart(e: any, item: any) {
       startPoint = { x: e.x, y: e.y }
-      const img = await setImageData(item)
+      const { width, height, thumb, url } = item
+      const img = await setImageData({ width, height, url: thumb || url })
       dragHelper.start(e, img.canvasWidth)
       this.$store.commit('selectItem', { data: { value: item }, type: item.type })
     },

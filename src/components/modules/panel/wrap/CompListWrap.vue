@@ -87,11 +87,11 @@ export default defineComponent({
     })
     const mouseup = (e: any) => {
       e.preventDefault()
-      setTimeout(() => {
-        isDrag = false
-        tempDetail = null
-        startPoint = { x: 99999, y: 99999 }
-      }, 10)
+      // setTimeout(() => {
+      isDrag = false
+      tempDetail = null
+      startPoint = { x: 99999, y: 99999 }
+      // }, 10)
     }
     const mousemove = (e: any) => {
       e.preventDefault()
@@ -192,15 +192,16 @@ export default defineComponent({
         this.addWidget(group)
       }
     },
-    async dragStart(e: any, { id }: any) {
-      startPoint = { x: e.x, y: e.y }
-      tempDetail = (await api.home.getTempDetail({ id, type: 1 }))?.data
-      let finalWidth = tempDetail.width
+    async dragStart(e: any, { id, width, height, cover }: any) {
+      // startPoint = { x: e.x, y: e.y }
+      // tempDetail = (await api.home.getTempDetail({ id, type: 1 }))?.data
+      let finalWidth = 0
       if (finalWidth) {
-        const img = await setImageData(tempDetail)
+        const img = await setImageData({ width, height, url: cover })
         finalWidth = img.canvasWidth
       }
       dragHelper.start(e, finalWidth)
+      tempDetail = await api.home.getTempDetail({ id, type: 1 })
       if (Array.isArray(JSON.parse(tempDetail.data))) {
         this.$store.commit('selectItem', { data: JSON.parse(tempDetail.data), type: 'group' })
       } else {

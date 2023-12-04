@@ -6,7 +6,9 @@
  * @LastEditTime: 2023-10-16 09:23:06
 -->
 <template>
-  <div class="top-title"><el-input v-model="title" disabled placeholder="未命名的设计" class="input-wrap" /></div>
+  <div class="top-title">
+    <!-- <el-input v-model="title" disabled placeholder="未命名的设计" class="input-wrap" /> -->
+  </div>
   <div class="top-icon-wrap">
     <template v-if="tempEditing">
       <span style="color: #999; font-size: 14px; margin-right: 0.5rem">{{ stateBollean ? '启用' : '停用' }}</span> <el-switch v-model="stateBollean" @change="stateChange" />
@@ -161,7 +163,7 @@ export default defineComponent({
         return
       }
       const {
-        data: { data: content, title, state, width, height },
+        data: { data: content, title, state, width, height, category },
       } = await api.home[apiName]({ id: id || tempId, type })
       if (content) {
         const data = JSON.parse(content)
@@ -175,8 +177,13 @@ export default defineComponent({
           this.dPage.height = height
           this.addGroup(data)
         } else {
+          console.log(data)
           this.$store.commit('setDPage', data.page)
           id ? this.$store.commit('setDWidgets', data.widgets) : this.$store.dispatch('setTemplate', data.widgets)
+          this.$store.commit('setBasicInfo', {
+            title,
+            category,
+          })
         }
         cb()
         this.pushHistory('请求加载load')
@@ -184,8 +191,8 @@ export default defineComponent({
     },
     draw() {
       return new Promise((resolve) => {
-        this.$refs.canvasImage.createCover(({ key }) => {
-          resolve(_config.IMG_URL + key)
+        this.$refs.canvasImage.createCover((url) => {
+          resolve(url)
         })
       })
     },

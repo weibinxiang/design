@@ -112,20 +112,23 @@ export default defineComponent({
       }
       this.$store.commit('managerEdit', false)
       this.$store.commit('setDWidgets', [])
-
+      this.$store.commit('setBasicInfo', undefined)
       this.setTempId(item.id)
 
-      let result = null
+      let pageData = null
+      let res
       if (!item.data) {
-        const res = await api.home.getTempDetail({ id: item.id })
-        result = JSON.parse(res.data.data)
+        res = (await api.home.getTempDetail({ id: item.id })).data
+        pageData = JSON.parse(res.data)
       } else {
-        result = JSON.parse(item.data)
+        res = item
+        pageData = JSON.parse(item.data)
       }
-      const { page, widgets } = result
+      const { page, widgets } = pageData
 
       this.$store.commit('setDPage', page)
       this.setTemplate(widgets)
+      this.$store.commit('setBasicInfo', { title: res.title, category: res.category })
       setTimeout(() => {
         this.$store.commit('zoomScreenChange')
       }, 300)

@@ -31,6 +31,7 @@ import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus'
 import { useRoute } from 'vue-router'
 import api from '@/api'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   components: { ElDropdown, ElDropdownItem, ElDropdownMenu },
@@ -43,12 +44,12 @@ export default defineComponent({
       materialCates: [],
       currentIndex: 1,
     })
+    const store = useStore()
 
     if (props.type != 'none') {
       api.home.getCategories({ type: 1 }).then((res: any) => {
-        const list = res.data
-        list.unshift({ id: 0, name: '全部' })
-        state.materialCates = list
+        store.commit('setMaterialCates', res.data)
+        state.materialCates = [{ id: 0, name: '全部' }, ...res.data]
         const { cate } = route.query
         cate && (state.currentIndex = cate)
         cate && action('change', state.materialCates[Number(cate)], Number(cate))

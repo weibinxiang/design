@@ -33,11 +33,12 @@
         :key="efi + 'effect'"
         :style="{
           fontFamily: `'${params.fontClass.value}'`,
-          color: ef.filling && ef.filling.type === 0 ? ef.filling.color : 'transparent',
-          webkitTextStroke: ef.stroke ? `${ef.stroke.width}px ${ef.stroke.color}` : undefined,
-          textShadow: ef.shadow ? `${ef.shadow.offsetX}px ${ef.shadow.offsetY}px ${ef.shadow.blur}px ${ef.shadow.color}` : undefined,
-          backgroundImage: ef.filling ? (ef.filling.type === 0 ? undefined : getGradientOrImg(ef)) : undefined,
-          webkitBackgroundClip: ef.filling ? (ef.filling.type === 0 ? undefined : 'text') : undefined,
+          color: ef.filling && ef.filling.enable && ef.filling.type === 0 ? ef.filling.color : 'transparent',
+          webkitTextStroke: ef.stroke && ef.stroke.enable ? `${ef.stroke.width}px ${ef.stroke.color}` : undefined,
+          textShadow: ef.shadow && ef.shadow.enable ? `${ef.shadow.offsetX}px ${ef.shadow.offsetY}px ${ef.shadow.blur}px ${ef.shadow.color}` : undefined,
+          backgroundImage: ef.filling && ef.filling.enable ? (ef.filling.type === 0 ? undefined : getGradientOrImg(ef)) : undefined,
+          webkitBackgroundClip: ef.filling && ef.filling.enable ? (ef.filling.type === 0 ? undefined : 'text') : undefined,
+          transform: ef.offset && ef.offset.enable ? `translate(${ef.offset.x}px, ${ef.offset.y}px)` : undefined,
         }"
         class="edit-text effect-text"
         spellcheck="false"
@@ -54,6 +55,7 @@ const NAME = 'w-text'
 
 import { mapGetters, mapActions } from 'vuex'
 import { fontWithDraw } from '@/utils/widgets/loadFontRule'
+import getGradientOrImg from './getGradientOrImg.ts'
 
 export default {
   name: NAME,
@@ -157,9 +159,7 @@ export default {
   },
   methods: {
     ...mapActions(['updateWidgetData', 'pushHistory']),
-    getGradientOrImg(ef) {
-      return ef.filling.type === 2 ? `linear-gradient(${ef.filling.gradient.angle}deg, ${ef.filling.gradient.stops[0].color} ${Number(ef.filling.gradient.stops[0].offset) * 100}%, ${ef.filling.gradient.stops[1].color} ${Number(ef.filling.gradient.stops[1].offset) * 100}%)` : `url(${ef.filling.imageContent.image})`
-    },
+    getGradientOrImg,
     styleEffect() {
       if (this.params.textEffects && this.params.textEffects.length > 0) {
         const style = this.params.textEffects[this.params.textEffects.length - 1]

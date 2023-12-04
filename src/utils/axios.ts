@@ -37,7 +37,6 @@ axios.interceptors.request.use(
     // values.access_token = access_token;
     // values.version = version;
     config.headers.token = store.state.token
-    console.log('ss', store.state.token)
 
     if (url.indexOf('http://') !== 0 && url.indexOf('https://') !== 0) {
       url.indexOf('/') === 0 ? (config.url = baseUrl + url) : (config.url = baseUrl + '/' + url)
@@ -117,6 +116,9 @@ axios.interceptors.response.use(
     // } else
     if (res.data && res.data.code === 200) {
       return Promise.resolve(res.data)
+    } else {
+      ElMessage.error(res.data.msg)
+      return Promise.reject(res.data)
     }
   },
   (error) => {

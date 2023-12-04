@@ -83,6 +83,11 @@ const all = {
     updateSelect: null, // 强制设置选择元素
     dCropUuid: -1, // 正在编辑or裁剪的组件id
     // dDragInitData: {}, // 拖拽初始化数据
+    basicInfo: {
+      title: '',
+      category: '',
+    },
+    materialCates: [],
   },
   getters: {
     selectItem(state: any) {

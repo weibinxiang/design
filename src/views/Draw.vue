@@ -50,7 +50,7 @@ export default defineComponent({
       console.log(tempid)
       if (id || tempid) {
         const {
-          data: { data, width, height },
+          data: { data, width, height, title, category },
         } = await api.home[id ? 'getWorks' : 'getTempDetail']({ id: id || tempid, type })
 
         const content = JSON.parse(data)
@@ -63,6 +63,10 @@ export default defineComponent({
         } else {
           this.$store.commit('setDPage', content.page)
           id ? this.$store.commit('setDWidgets', widgets) : this.setTemplate(widgets)
+          this.$store.commit('setBasicInfo', {
+            title,
+            category,
+          })
         }
 
         await this.$nextTick()

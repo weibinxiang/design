@@ -24,12 +24,19 @@ export default function keyCodeOptions(e: any, params: any) {
       break
     case 46:
     case 8:
-      if (store.getters.dActiveElement.isContainer) {
-        if (checkGroupChild(store.getters.dActiveElement.uuid, 'editable')) {
-          return
+      {
+        if (store.getters.dActiveElement.isContainer) {
+          if (checkGroupChild(store.getters.dActiveElement.uuid, 'editable')) {
+            return
+          }
         }
+        const { type, editable }: any = store.getters.dActiveElement
+
+        if (type === 'w-text') {
+          // 不在编辑状态则执行删除
+          !editable && store.getters.showMoveable && store.dispatch('deleteWidget')
+        } else store.dispatch('deleteWidget')
       }
-      !store.getters.dActiveElement.editable && store.dispatch('deleteWidget')
       break
   }
 }

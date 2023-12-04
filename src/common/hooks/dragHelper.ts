@@ -18,6 +18,8 @@ export default class dragHelper {
         const { offsetX, offsetY, width, height } = this.initial
         // this.moveFlutter(e.pageX - offsetX, e.pageY - offsetY, this.distance(e))
         this.moveFlutter(e.pageX - width / 2, e.pageY - height / 2, this.distance(e))
+      } else {
+        this.finish()
       }
     })
     // 鼠标抬起
@@ -91,6 +93,9 @@ export default class dragHelper {
   }
   // 结束/完成处理（动画）
   private finish(done = false) {
+    if (!this.dragging) {
+      return
+    }
     this.dragging = false
     store.commit('setDraging', false)
     store.commit('selectItem', {})

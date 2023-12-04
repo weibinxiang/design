@@ -36,6 +36,12 @@ export default {
   setDWidgets(state: Type.Object, e: any) {
     state.dWidgets = e
   },
+  setBasicInfo(state: Type.Object, e: any) {
+    state.basicInfo = e || {
+      title: '',
+      category: '',
+    }
+  },
   setDPage(state: Type.Object, e: any) {
     state.dPage = e
   },
@@ -71,6 +77,9 @@ export default {
   },
   setDraging(state: Type.Object, drag: boolean) {
     state.dDraging = drag
+  },
+  setMaterialCates(state: Type.Object, cates: any[]) {
+    state.materialCates = cates
   },
   // setDragInitData(state: Type.Object, data: any) {
   //   state.dDragInitData = data

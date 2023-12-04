@@ -1,6 +1,7 @@
 <template>
   <div id="style-panel">
     <div class="style-tab">
+      <span :class="['tab', { 'active-tab': activeTab === 2 }]" @click="activeTab = 2">基础信息</span>
       <span :class="['tab', { 'active-tab': activeTab === 0 }]" @click="activeTab = 0">设置</span>
       <span :class="['tab', { 'active-tab': activeTab === 1 }]" @click="activeTab = 1">图层</span>
     </div>
@@ -13,6 +14,9 @@
     </div>
     <div v-show="activeTab === 1" class="layer-wrap">
       <layer-list :data="dWidgets" @change="layerChange" />
+    </div>
+    <div v-show="activeTab === 2" class="layer-wrap">
+      <info-setting />
     </div>
   </div>
 </template>
