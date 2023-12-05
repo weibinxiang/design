@@ -11,7 +11,7 @@
     </div>
     <div v-show="active" class="widget-wrap">
       <keep-alive>
-        <component :is="widgetClassifyList[activeWidgetClassify].component" />
+        <component :is="widgetClassifyList[activeWidgetClassify]?.component" />
       </keep-alive>
     </div>
     <!-- <div v-show="active" class="side-wrap"><div class="pack__up" @click="active = false">&lt;</div></div> -->

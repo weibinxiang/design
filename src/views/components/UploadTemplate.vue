@@ -66,10 +66,11 @@ export default defineComponent({
         ElMessage.warning('请先在模板信息中填写模板标题')
         return
       }
-      if (!store.state.design.basicInfo.title) {
+      if (!store.state.design.basicInfo.category) {
         ElMessage.warning('请先在模板信息中选择模板分类')
         return
       }
+
       store.commit('setShowMoveable', false) // 清理掉上一次的选择框
       addition = 0
       lenCount = 0
@@ -124,11 +125,11 @@ export default defineComponent({
         code,
         data: { id },
         msg,
-      } = await api.home.saveWorks({ category: store.state.basicInfo.category, cover, title: store.state.design.basicInfo.title, data: JSON.stringify({ page, widgets }), width: page.width, height: page.height }).catch((res) => res)
+      } = await api.home.saveWorks({ category: store.state.design.basicInfo.category, cover, title: store.state.design.basicInfo.title, data: JSON.stringify({ page, widgets }), width: page.width, height: page.height }).catch((res) => res)
       if (code === 200) {
         // useNotification('保存成功', '可在"我的模板"中查看')
-        router.push({ path: '/psd', query: { id }, replace: true })
-        context.emit('change', { downloadPercent: 99.99, downloadText: '上传完成', cancelText: '查看我的作品' }) // 关闭弹窗
+        router.push({ path: '/psd', query: { tempid: id }, replace: true })
+        context.emit('change', { downloadPercent: 99.99, downloadText: '上传完成', cancelText: '查看已上传模板' }) // 关闭弹窗
       } else {
         useNotification('保存失败', msg, { type: 'error' })
 

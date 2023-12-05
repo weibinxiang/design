@@ -132,7 +132,7 @@ export default defineComponent({
     }
     const cancel = () => {
       state.downloadPercent = 100
-      window.open(`${window.location.protocol + '//' + window.location.host}/home?id=${route.query.id}`)
+      window.open(`${window.location.protocol + '//' + window.location.host}/home?tempid=${route.query.tempid}`)
     }
 
     return {

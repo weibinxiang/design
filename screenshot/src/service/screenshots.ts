@@ -58,6 +58,7 @@ module.exports = {
      */
     let { id, tempid, tempType, width, height, screenshot_url, type = 'file', size, quality, t } = req.query
     const url = (screenshot_url || drawLink) + `${id ? '?id=' : '?tempid='}`
+    console.log('id', id)
     id = id || tempid
     const path = filePath + `${id}-screenshot.png`
     const thumbPath = type === 'cover' && tempType != 1 ? filePath + `${id}-cover.jpg` : null

@@ -10,7 +10,7 @@ import _config from '@/config'
 import store from '@/store'
 
 // const screenshot_url = window.location.protocol + '//' + window.location.host + '/draw'
-export const download = (params: Type.Object = {}) => `${_config.SCREEN_URL}/api/screenshots?tempid=${params.tempid}&width=${params.width}&height=${params.height}&t=${store.state.encryptionToken}`
+export const download = (params: Type.Object = {}) => `${_config.SCREEN_URL}/api/screenshots?id=${params.id}&tempid=${params.tempid}&width=${params.width}&height=${params.height}&t=${store.state.encryptionToken}`
 
 // 获取模板列表
 export const getTempList = (params: Type.Object = {}) => fetch('/design/getDesignTemplateModuleList', params, 'get')

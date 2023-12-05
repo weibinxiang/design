@@ -26,7 +26,7 @@ export const useFontStore = {
     if (this.list.length === 0) {
       const res = await getFonts({ pageSize: 400 })
       this.list.unshift(
-        ...res.list.map((x: any) => {
+        ...res.data.data.map((x: any) => {
           const { id, alias, oid, value, preview, woff, lang } = x
           return { id, oid, value, preview, alias, url: woff, lang }
         }),

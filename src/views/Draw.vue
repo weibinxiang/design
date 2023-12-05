@@ -47,12 +47,11 @@ export default defineComponent({
     async load() {
       let loadFlag = false
       const { id, tempid, tempType: type } = this.$route.query
-      console.log(tempid)
       if (id || tempid) {
+        console.log(id)
         const {
           data: { data, width, height, title, category },
-        } = await api.home[id ? 'getWorks' : 'getTempDetail']({ id: id || tempid, type })
-
+        } = await api.home[id ? 'getMyDesignDetail' : 'getTempDetail']({ id: id || tempid, type })
         const content = JSON.parse(data)
         const widgets = type == 1 ? content : content.widgets
         if (type == 1) {

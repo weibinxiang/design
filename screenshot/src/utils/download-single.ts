@@ -78,9 +78,9 @@ const saveScreenshot = async (url: string, { path, width, height, thumbPath, siz
       })
     }
 
-    // page.on('console', (message: any) => {
-    //   console.log(`Console: ${message.text()}`)
-    // })
+    page.on('console', (message: any) => {
+      console.log(`Console: ${message.text()}`)
+    })
 
     // 主动模式下注入全局方法
     await page.exposeFunction('loadFinishToInject', async () => {

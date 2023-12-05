@@ -18,7 +18,9 @@
       </el-collapse-item>
       <el-collapse-item title="设置" name="2">
         <!-- <el-button size="mini" style="width: 100%; margin-top: 0.5rem" plain @click="openCropper">替换图片</el-button> -->
-        <el-button style="width: 100%; margin-bottom: 12px" plain @click="openPicBox">替换图片</el-button>
+        <uploader v-model="percent" class="upload" @done="selectDone">
+          <el-button style="width: 100%; margin-bottom: 12px" plain :loading="percent">替换图片</el-button>
+        </uploader>
         <div class="options">
           <el-button v-if="innerElement.cropEdit" plain type="primary" @click="imgCrop(false)">完成</el-button>
           <el-button v-else plain type="primary" @click="imgCrop(true)"><i class="icon sd-caijian" /> 裁剪</el-button>
@@ -66,7 +68,7 @@ import numberSlider from '../../settings/numberSlider.vue'
 // import textInput from '../../settings/textInput.vue'
 // import CropImage from '@/components/business/cropper/CropImage.vue'
 // import ContainerWrap from '../../settings/EffectSelect/ContainerWrap.vue'
-// import uploader from '@/components/common/Uploader/index.vue'
+import uploader from '@/components/common/Uploader/index.vue'
 import { getImage } from '@/common/methods/getImgDetail'
 import api from '@/api'
 import layerIconList from '@/assets/data/LayerIconList'
@@ -76,12 +78,13 @@ import imageCutout from '@/components/business/image-cutout'
 
 export default {
   name: NAME,
-  components: { numberInput, numberSlider, iconItemSelect, picBox, imageCutout },
+  components: { numberInput, numberSlider, iconItemSelect, picBox, imageCutout, uploader },
   data() {
     return {
       picBoxShow: false,
       activeNames: ['2', '3', '4'],
       innerElement: {},
+      percent: 0, // 当前上传进度
       tag: false,
       ingoreKeys: ['left', 'top', 'name', 'width', 'height', 'radiusTopLeft', 'radiusTopRight', 'radiusBottomLeft', 'radiusBottomRight'],
       layerIconList: layerIconList.concat([
@@ -224,7 +227,8 @@ export default {
       this.$store.commit('setShowMoveable', true)
     },
     selectDone(img) {
-      this.innerElement.imgUrl = img.url
+      this.percent = 0
+      this.innerElement.imgUrl = img
       // this.imgCrop(true)
     },
     imgCrop(val) {

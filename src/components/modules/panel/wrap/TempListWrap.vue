@@ -162,8 +162,8 @@ export default defineComponent({
     //   api.home.setTempStat({ id, stat })
     // },
     setTempId(tempId: number | string) {
-      const { id, t } = this.$route.query
-      this.$router.push({ path: '/home', query: { tempid: tempId, id, t }, replace: true })
+      const { t } = this.$route.query
+      this.$router.push({ path: '/home', query: { tempid: tempId, t }, replace: true })
     },
   },
 })

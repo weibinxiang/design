@@ -3,7 +3,7 @@
     <div :style="style" class="top-nav">
       <div class="top-nav-wrap">
         <div class="top-left">
-          <div class="name" @click="jump2home">{{ APP_NAME }}</div>
+          <!-- <div class="name" @click="jump2home">{{ APP_NAME }}</div> -->
           <div class="operation">
             <div :class="['operation-item', { disable: !undoable }]" @click="undoable ? handleHistory('undo') : ''"><i class="iconfont icon-undo" /></div>
             <div :class="['operation-item', { disable: !redoable }]" @click="redoable ? handleHistory('redo') : ''"><i class="iconfont icon-redo" /></div>
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="page-design-index-wrap">
-      <widget-panel></widget-panel>
+      <!-- <widget-panel></widget-panel> -->
       <design-board class="page-design-wrap" pageDesignCanvasId="page-design-canvas">
         <!-- 用于挡住画布溢出部分，因为使用overflow有bug -->
         <div class="shelter" :style="{ width: Math.floor((dPage.width * dZoom) / 100) + 'px', height: Math.floor((dPage.height * dZoom) / 100) + 'px' }"></div>

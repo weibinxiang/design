@@ -160,7 +160,9 @@ export default defineComponent({
     const selectEffect = async (id) => {
       state.visiable = false
       if (id) {
-        const { data } = await api.home.getTempDetail({ id, type: 1 })
+        const {
+          data: { data },
+        } = await api.home.getTempDetail({ id, type: 1 })
         state.layers = JSON.parse(data)
           .textEffects.map((x) => {
             x.uuid = String(Math.random())
@@ -227,7 +229,9 @@ export default defineComponent({
     const openSet = async () => {
       state.visiable = !state.visiable
       if (froze_font_effect_list.length <= 0) {
-        const { list } = await api.home.getCompList({
+        const {
+          data: { data: list },
+        } = await api.home.getCompList({
           cate: 12,
           type: 1,
           pageSize: 30,

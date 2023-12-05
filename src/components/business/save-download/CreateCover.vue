@@ -33,7 +33,7 @@ export default defineComponent({
       proxy?.updateZoom(100)
       const opts = {
         useCORS: true, // 跨域图片
-        scale: 0.2,
+        scale: 1,
       }
       setTimeout(async () => {
         const clonePage: HTMLElement = document.getElementById('page-design-canvas').cloneNode(true)
@@ -43,11 +43,11 @@ export default defineComponent({
           canvas.toBlob(
             async (blobObj: Blob) => {
               const file = new File([blobObj], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${blobObj.type.split('/')[1]}`)
-              const result = await uploadImage(file, { type: HuaweiType.other, number: FileType.image })
+              const result = await uploadImage(file, { type: HuaweiType.curriculumCover, number: FileType.image })
               cb(result)
             },
             'image/jpeg',
-            0.3,
+            1,
           )
           proxy?.updateZoom(nowZoom)
           clonePage.remove()

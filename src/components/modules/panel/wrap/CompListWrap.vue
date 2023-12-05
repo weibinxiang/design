@@ -202,10 +202,10 @@ export default defineComponent({
       }
       dragHelper.start(e, finalWidth)
       tempDetail = await api.home.getTempDetail({ id, type: 1 })
-      if (Array.isArray(JSON.parse(tempDetail.data))) {
-        this.$store.commit('selectItem', { data: JSON.parse(tempDetail.data), type: 'group' })
+      if (Array.isArray(JSON.parse(tempDetail.data.data))) {
+        this.$store.commit('selectItem', { data: JSON.parse(tempDetail.data.data), type: 'group' })
       } else {
-        this.$store.commit('selectItem', { data: JSON.parse(tempDetail.data), type: 'text' })
+        this.$store.commit('selectItem', { data: JSON.parse(tempDetail.data.data), type: 'text' })
       }
     },
   },
