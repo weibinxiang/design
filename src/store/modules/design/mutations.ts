@@ -81,6 +81,9 @@ export default {
   setMaterialCates(state: Type.Object, cates: any[]) {
     state.materialCates = cates
   },
+  setTabActive(state: Type.Object, active: any) {
+    state.tabActive = active
+  },
   // setDragInitData(state: Type.Object, data: any) {
   //   state.dDragInitData = data
   // },

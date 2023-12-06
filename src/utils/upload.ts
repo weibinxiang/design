@@ -7,14 +7,7 @@ import CryptoJS from 'crypto-js'
 import { useThrottleFn } from '@vueuse/core'
 import { cloneDeep } from 'lodash-es'
 
-const fetch = axios.create({
-  // 其他配置...
-  responseInterceptorsCatch: function (error) {
-    // 处理错误逻辑
-    console.log(error, 514315)
-    return Promise.reject(error)
-  },
-})
+const fetch = axios.create()
 
 const bufferChunkSize = 5 * 1024 * 1024 // 计算哈希值时切割大小 5MB
 let saveFileQueue: (SaveFileUrlParams & { resolve; reject })[] = []

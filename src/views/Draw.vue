@@ -131,7 +131,7 @@ export default defineComponent({
           try {
             ;(window as any).loadFinishToInject('done')
           } catch (err) {}
-        }, 100)
+        }, 500)
       }
       // 超时
       setTimeout(() => {

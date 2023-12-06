@@ -88,6 +88,7 @@ const all = {
       category: '',
     },
     materialCates: [],
+    tabActive: 0,
   },
   getters: {
     selectItem(state: any) {
@@ -182,6 +183,9 @@ const all = {
     },
     dHistory(state: any) {
       return state.dHistory
+    },
+    tabActive(state: any) {
+      return state.tabActive
     },
     // dDragInitData(state: any) {
     //   return state.dDragInitData

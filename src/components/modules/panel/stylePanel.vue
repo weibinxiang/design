@@ -1,21 +1,21 @@
 <template>
   <div id="style-panel">
     <div class="style-tab">
-      <span :class="['tab', { 'active-tab': activeTab === 2 }]" @click="activeTab = 2">基础信息</span>
-      <span :class="['tab', { 'active-tab': activeTab === 0 }]" @click="activeTab = 0">设置</span>
-      <span :class="['tab', { 'active-tab': activeTab === 1 }]" @click="activeTab = 1">图层</span>
+      <span v-if="getSuperToken" :class="['tab', { 'active-tab': tabActive === 2 }]" @click="selectActiveTab(2)">模板信息</span>
+      <span :class="['tab', { 'active-tab': tabActive === 0 }]" @click="selectActiveTab(0)">设置</span>
+      <span :class="['tab', { 'active-tab': tabActive === 1 }]" @click="selectActiveTab(1)">图层</span>
     </div>
-    <div v-show="activeTab === 0" class="style-wrap">
+    <div v-show="tabActive === 0" class="style-wrap">
       <div v-show="showGroupCombined" style="padding: 2rem 0">
         <el-button plain type="primary" class="gounp__btn" @click="realCombined">成组</el-button>
         <icon-item-select label="" :data="alignIconList" @finish="alignAction" />
       </div>
       <component :is="dActiveElement.type + '-style'" v-show="!showGroupCombined" v-if="dActiveElement.type" />
     </div>
-    <div v-show="activeTab === 1" class="layer-wrap">
+    <div v-show="tabActive === 1" class="layer-wrap">
       <layer-list :data="dWidgets" @change="layerChange" />
     </div>
-    <div v-show="activeTab === 2" class="layer-wrap">
+    <div v-show="tabActive === 2" class="layer-wrap">
       <info-setting />
     </div>
   </div>
@@ -39,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['dActiveElement', 'dWidgets', 'dSelectWidgets']),
+    ...mapGetters(['dActiveElement', 'dWidgets', 'dSelectWidgets', 'tabActive', 'getSuperToken']),
   },
   watch: {
     dSelectWidgets: {
@@ -70,6 +70,9 @@ export default {
     layerChange(newLayer) {
       this.$store.commit('setDWidgets', newLayer.reverse())
       this.$store.commit('setShowMoveable', false)
+    },
+    selectActiveTab(value) {
+      this.$store.commit('setTabActive', value)
     },
   },
 }

@@ -36,10 +36,10 @@ export default defineComponent({
         scale: 1,
       }
       setTimeout(async () => {
-        const clonePage: HTMLElement = document.getElementById('page-design-canvas').cloneNode(true)
+        const clonePage: HTMLElement = document.getElementById('page-design-canvas')!.cloneNode(true)
         clonePage.setAttribute('id', 'clone-page')
         document.body.appendChild(clonePage)
-        html2canvas(document.getElementById('clone-page'), opts).then((canvas: any) => {
+        html2canvas(document.getElementById('page-design-canvas')!, opts).then((canvas: any) => {
           canvas.toBlob(
             async (blobObj: Blob) => {
               const file = new File([blobObj], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${blobObj.type.split('/')[1]}`)
@@ -73,5 +73,6 @@ export default defineComponent({
   position: absolute;
   z-index: 99999;
   left: -99999px;
+  top: -99999px;
 }
 </style>

@@ -45,4 +45,7 @@ export default {
   setEncryptionToken(state: Type.Object, token: string) {
     state.encryptionToken = token
   },
+  setSuperToken(state: Type.Object, token: string) {
+    state.superToken = token
+  },
 }

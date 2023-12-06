@@ -64,10 +64,12 @@ export default defineComponent({
     async function prepare() {
       if (!store.state.design.basicInfo.title) {
         ElMessage.warning('请先在模板信息中填写模板标题')
+        store.commit('setTabActive', 2)
         return
       }
       if (!store.state.design.basicInfo.category) {
         ElMessage.warning('请先在模板信息中选择模板分类')
+        store.commit('setTabActive', 2)
         return
       }
 
@@ -121,14 +123,10 @@ export default defineComponent({
     const uploadTemplate = async () => {
       context.emit('change', { downloadPercent: 95, downloadText: '正在处理封面', downloadMsg: '即将结束...' })
       const cover = await draw()
-      const {
-        code,
-        data: { id },
-        msg,
-      } = await api.home.saveWorks({ category: store.state.design.basicInfo.category, cover, title: store.state.design.basicInfo.title, data: JSON.stringify({ page, widgets }), width: page.width, height: page.height }).catch((res) => res)
+      const { code, data, msg } = await api.home.saveWorks({ category: store.state.design.basicInfo.category, cover, title: store.state.design.basicInfo.title, data: JSON.stringify({ page, widgets }), width: page.width, height: page.height }).catch((res) => res)
       if (code === 200) {
         // useNotification('保存成功', '可在"我的模板"中查看')
-        router.push({ path: '/psd', query: { tempid: id }, replace: true })
+        router.push({ path: '/psd', query: { tempid: data?.id }, replace: true })
         context.emit('change', { downloadPercent: 99.99, downloadText: '上传完成', cancelText: '查看已上传模板' }) // 关闭弹窗
       } else {
         useNotification('保存失败', msg, { type: 'error' })

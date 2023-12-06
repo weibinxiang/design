@@ -26,8 +26,8 @@ elementConfig.plugins.forEach((plugin: any) => {
   app.use(plugin)
 })
 
-// 初次加载处理token操作，导航栏没带就取本地的
 try {
+  // 初次加载处理token操作，导航栏没带就取本地的
   const search = window.location.search.substr(1) || ''
   const query = new URLSearchParams(search)
   const key = query.get('t') || JSON.parse(localStorage.getItem('DESIGN_INFO') || '{}')?.token
@@ -38,6 +38,19 @@ try {
   const token = CryptoJS.AES.decrypt(t, 'O+gm1/AXCp1ERKJko3jOGw==').toString(CryptoJS.enc.Utf8)
   store.commit('setToken', token || '')
   store.commit('setEncryptionToken', key || '')
+
+  // 处理超管token
+  const superToken = localStorage.getItem('SUPER_TOKEN')
+  store.commit('setSuperToken', superToken || '')
 } catch {}
+
+window.addEventListener('message', function getSuperToken(e) {
+  const data = e.data
+  if (data.type === 'superToken') {
+    store.commit('setSuperToken', data.token || '')
+    localStorage.setItem('SUPER_TOKEN', data.token)
+    window.removeEventListener('message', getSuperToken)
+  }
+})
 
 app.use(store).use(router).use(utils).mount('#app')

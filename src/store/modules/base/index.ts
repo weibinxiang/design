@@ -23,6 +23,7 @@ const all = {
     app: null, // 抠图服务
     token: '',
     encryptionToken: '',
+    superToken: '',
   },
   getters: {
     online: (state: Type.Object) => {
@@ -42,6 +43,9 @@ const all = {
     },
     getToken: (state: Type.Object) => {
       return state.token
+    },
+    getSuperToken: (state: Type.Object) => {
+      return state.superToken
     },
   },
   mutations: {

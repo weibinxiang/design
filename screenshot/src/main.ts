@@ -1,7 +1,7 @@
 /*
  * @Author: ShawnPhang
  * @Date: 2022-02-01 13:41:59
- * @Description:  
+ * @Description:
  * @LastEditors: ShawnPhang <site: m.palxp.cn>
  * @LastEditTime: 2023-07-06 10:19:18
  */
@@ -18,21 +18,21 @@ const app = express()
 
 // 创建目录
 const createFolder = (folder: string) => {
-    try {
-        fs.accessSync(folder)
-    } catch (e) {
-        fs.mkdirSync(folder)
-    }
+  try {
+    fs.accessSync(folder)
+  } catch (e) {
+    fs.mkdirSync(folder)
+  }
 }
 createFolder(filePath)
 
 app.all('*', (req: any, res: any, next: any) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Length,Content-Size');
-    res.header('Access-Control-Allow-Methods', '*');
-    res.header('Content-Type', 'application/json;charset=utf-8');
-    next();
-});
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Length,Content-Size,token')
+  res.header('Access-Control-Allow-Methods', '*')
+  res.header('Content-Type', 'application/json;charset=utf-8')
+  next()
+})
 
 app.use('/static', express.static('static'))
 // app.use('/cache', express.static('cache'))
@@ -40,8 +40,8 @@ app.use('/static', express.static('static'))
 app.use(handleTimeout)
 
 app.use((req: any, res: any, next: any) => {
-    console.log(req.path)
-    next()
+  console.log(req.path)
+  next()
 })
 
 app.use(bodyParser.urlencoded({ extended: true }))

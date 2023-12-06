@@ -56,9 +56,10 @@ module.exports = {
      * @apiParam {String} size 可选, 按比例缩小到宽度
      * @apiParam {String} quality 可选, 质量
      */
-    let { id, tempid, tempType, width, height, screenshot_url, type = 'file', size, quality, t } = req.query
+    let { id, tempid, tempType, width, height, screenshot_url, type = 'file', size, quality } = req.query
+    const { token } = req.headers
     const url = (screenshot_url || drawLink) + `${id ? '?id=' : '?tempid='}`
-    console.log('id', id)
+    console.log('id', id, token)
     id = id || tempid
     const path = filePath + `${id}-screenshot.png`
     const thumbPath = type === 'cover' && tempType != 1 ? filePath + `${id}-cover.jpg` : null
@@ -70,12 +71,13 @@ module.exports = {
       }
       const targetUrl = url + id + `${tempType ? '&tempType=' + tempType : ''}`
 
-      queueRun(saveScreenshot, targetUrl, { width, height, path, thumbPath, size, quality, t })
+      queueRun(saveScreenshot, targetUrl, { width, height, path, thumbPath, size, quality, token })
         .then(() => {
           res.setHeader('Content-Type', 'image/jpg')
           // const stats = fs.statSync(path)
           // res.setHeader('Cache-Control', stats.size)
           type === 'file' ? res.sendFile(path) : res.sendFile(thumbPath)
+          // res.json({ code: 200, msg: '截图成功', data: { path, thumbPath } })
         })
         .catch((e: any) => {
           res.json({ code: 500, msg: '图片生成错误' })

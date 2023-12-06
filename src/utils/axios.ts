@@ -37,6 +37,7 @@ axios.interceptors.request.use(
     // values.access_token = access_token;
     // values.version = version;
     config.headers.token = store.state.token
+    store.state.superToken && (config.headers.operator_token = store.state.superToken)
 
     if (url.indexOf('http://') !== 0 && url.indexOf('https://') !== 0) {
       url.indexOf('/') === 0 ? (config.url = baseUrl + url) : (config.url = baseUrl + '/' + url)

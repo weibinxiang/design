@@ -53,11 +53,11 @@ import wGroup from '@/components/modules/widgets/wGroup/wGroup.vue'
 import HeaderOptions from './components/HeaderOptions.vue'
 import ProgressLoading from '@/components/common/ProgressLoading/index.vue'
 
-const beforeUnload = function (e: any) {
-  const confirmationMessage = '系统不会自动保存您未修改的内容'
-  ;(e || window.event).returnValue = confirmationMessage // Gecko and Trident
-  return confirmationMessage // Gecko and WebKit
-}
+// const beforeUnload = function (e: any) {
+//   const confirmationMessage = '系统不会自动保存您未修改的内容'
+//   ;(e || window.event).returnValue = confirmationMessage // Gecko and Trident
+//   return confirmationMessage // Gecko and WebKit
+// }
 
 export default defineComponent({
   components: {
@@ -71,7 +71,7 @@ export default defineComponent({
   },
   mixins: [shortcuts],
   setup() {
-    !_config.isDev && window.addEventListener('beforeunload', beforeUnload)
+    // !_config.isDev && window.addEventListener('beforeunload', beforeUnload)
 
     const state = reactive({
       style: {

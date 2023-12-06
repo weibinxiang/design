@@ -10,16 +10,17 @@
     <!-- <el-input v-model="title" disabled placeholder="未命名的设计" class="input-wrap" /> -->
   </div>
   <div class="top-icon-wrap">
-    <template v-if="tempEditing">
+    <!-- <template v-if="tempEditing">
       <span style="color: #999; font-size: 14px; margin-right: 0.5rem">{{ stateBollean ? '启用' : '停用' }}</span> <el-switch v-model="stateBollean" @change="stateChange" />
       <div class="divide__line">|</div>
       <el-button plain type="primary" @click="saveTemp">保存模板</el-button>
       <el-button @click="$store.commit('managerEdit', false)">取消</el-button>
       <div class="divide__line">|</div>
-    </template>
+    </template> -->
     <el-button size="large" class="primary-btn" @click="back">返回</el-button>
-    <el-button :loading="loading" size="large" class="primary-btn" :disabled="tempEditing" @click="download">下载图片</el-button>
-    <el-button size="large" class="primary-btn" :disabled="tempEditing" plain type="primary" @click="save(true)">保存</el-button>
+    <el-button :loading="loading" size="large" class="primary-btn" :disabled="tempEditing" @click="createImage(true)">下载图片</el-button>
+    <el-button size="large" class="primary-btn" :disabled="tempEditing" plain type="primary" @click="createImage(false)">保存</el-button>
+    <el-button v-if="$route.query.tempid && store.state.superToken" size="large" plain type="primary" @click="saveTemp">保存模板</el-button>
   </div>
   <!-- 生成图片组件 -->
   <SaveImage ref="canvasImage" />
@@ -30,17 +31,24 @@ import api from '@/api'
 import { defineComponent, reactive, toRefs, getCurrentInstance, ComponentInternalInstance } from 'vue'
 import { mapGetters, mapActions, useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import _dl from '@/common/methods/download'
 import useNotification from '@/common/methods/notification'
 import SaveImage from '@/components/business/save-download/CreateCover.vue'
 import { useFontStore } from '@/common/methods/fonts'
-import copyRight from './CopyRight.vue'
 // import _config from '@/config'
 // import wGroup from '@/components/modules/widgets/wGroup/wGroup.vue'
 import useConfirm from '@/common/methods/confirm'
+import _config from '@/config'
+import uploadImage from '@/utils/upload'
+import { HuaweiType, FileType } from '@/api/upload'
+import { randomString } from '@/utils/utils'
+import { ElMessage } from 'element-plus'
+import dayjs from 'dayjs'
+import axios from 'axios'
+
+const fetch = axios.create()
 
 export default defineComponent({
-  components: { copyRight, SaveImage },
+  components: { SaveImage },
   props: ['modelValue'],
   emits: ['change', 'update:modelValue'],
   setup(props, context) {
@@ -68,10 +76,7 @@ export default defineComponent({
     }
 
     // 保存作品
-    async function save(onlySave: boolean) {
-      if (onlySave) {
-        context.emit('change', { downloadPercent: 1, downloadText: '正在生成图片' })
-      }
+    async function save() {
       // Bugs: 历史操作有问题，且page操作未及时入栈 proxy?.dPageHistory
       if (proxy?.dHistory.length <= 0) {
         return
@@ -85,20 +90,10 @@ export default defineComponent({
         data: { id: newId },
         code,
         msg,
-      } = await api.home[id ? 'editMyTemp' : 'saveMyTemp']({ cover: state.cover, id, title: proxy.title || '未命名设计', data: JSON.stringify({ page: proxy.dPage, widgets }), template_id: tempid, width: proxy.dPage.width, height: proxy.dPage.height })
+      } = await api.home[id ? 'editMyTemp' : 'saveMyTemp']({ cover: state.cover, id, category: store.state.design.basicInfo.category, title: store.state.design.basicInfo.title || '未命名设计', data: JSON.stringify({ page: proxy.dPage, widgets }), template_id: tempid, width: proxy.dPage.width, height: proxy.dPage.height })
       code !== 200 && useNotification('保存失败', msg, { type: 'error' })
       !id && router.push({ path: '/home', query: { id: newId }, replace: true })
 
-      if (onlySave) {
-        context.emit('change', { downloadPercent: 100, downloadText: '保存成功' })
-        window.parent?.postMessage(
-          {
-            type: 'save',
-            url: state.cover,
-          },
-          '*',
-        )
-      }
       store.commit('setShowMoveable', true)
     }
     // 保存模板
@@ -119,9 +114,9 @@ export default defineComponent({
           return
           // proxy.dWidgets.push(wGroup.setting)
         }
-        res = await api.home.saveTemp({ id: tempid, type, title: proxy.title || '未命名组件', content: JSON.stringify(proxy.dWidgets), width: proxy.dPage.width, height: proxy.dPage.height })
+        res = await api.home.saveTemp({ id: tempid, type, title: proxy.title || '未命名组件', data: JSON.stringify(proxy.dWidgets), width: proxy.dPage.width, height: proxy.dPage.height })
       } else {
-        res = await api.home.saveTemp({ id: tempid, title: proxy.title || '未命名模板', content: JSON.stringify({ page: proxy.dPage, widgets: proxy.dWidgets }), width: proxy.dPage.width, height: proxy.dPage.height })
+        res = await api.home.saveTemp({ id: tempid, title: proxy.title || '未命名模板', data: JSON.stringify({ page: proxy.dPage, widgets: proxy.dWidgets }), width: proxy.dPage.width, height: proxy.dPage.height })
       }
       res.stat != 0 && useNotification('保存成功', '模板内容已变更')
     }
@@ -131,26 +126,93 @@ export default defineComponent({
       const { stat } = await api.home.saveTemp({ id: tempid, type, state: e ? 1 : 0 })
       stat != 0 && useNotification('保存成功', '模板内容已变更')
     }
-    async function download() {
+    async function createImage(isDownload: boolean) {
+      if (route.query.tempId) {
+        if (!store.state.design.basicInfo.title) {
+          ElMessage.warning('请先在模板信息中填写模板标题')
+          store.commit('setTabActive', 2)
+          return
+        }
+        if (!store.state.design.basicInfo.category) {
+          ElMessage.warning('请先在模板信息中选择模板分类')
+          store.commit('setTabActive', 2)
+          return
+        }
+      }
       if (state.loading === true) {
         return
       }
       state.loading = true
       context.emit('update:modelValue', true)
       context.emit('change', { downloadPercent: 1, downloadText: '正在处理封面' })
-      await save(false)
-      window.location.href = state.cover
-      state.loading = false
-      context.emit('change', { downloadPercent: 100, downloadText: '图片下载中' })
+      await save()
+      setTimeout(async () => {
+        const { id } = route.query
+        if (id) {
+          const { width, height } = proxy.dPage
+          context.emit('update:modelValue', true)
+          context.emit('change', { downloadPercent: 1, downloadText: '准备合成图片' })
+          state.loading = false
+          let timerCount = 0
+          const animation = setInterval(() => {
+            if (props.modelValue && timerCount < 75) {
+              timerCount += RandomNumber(1, 10)
+              context.emit('change', { downloadPercent: 1 + timerCount, downloadText: '正在合成图片' })
+            } else {
+              clearInterval(animation)
+            }
+          }, 800)
+          // 获取bolb文件，用于上传
+          const res = await fetch.get(`${_config.SCREEN_URL}/api/screenshots`, {
+            responseType: 'blob',
+            headers: {
+              token: store.state.encryptionToken,
+            },
+            onDownloadProgress(event) {
+              clearInterval(animation)
+              const progress = (event.loaded / event.total) * 100
+              progress >= timerCount && context.emit('change', { downloadPercent: Number(progress.toFixed(0)), downloadText: '图片生成中' })
+            },
+            params: {
+              id,
+              width,
+              height,
+              r: Math.random(),
+            },
+          })
+          // 上传至华为云, 用于保存时回显到讲师端表单
+          const file = new File([res.data], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${res.data.type.split('/')[1]}`)
+          const url = await uploadImage(file, {
+            type: HuaweiType.curriculumCover,
+            number: FileType.image,
+          })
+          if (isDownload) {
+            window.location.href = url
+            context.emit('change', { downloadPercent: 100, downloadText: '图片下载中' })
+          } else {
+            context.emit('change', { downloadPercent: 100, downloadText: '保存成功' })
+            window.parent?.postMessage(
+              {
+                type: 'save',
+                url: url,
+              },
+              '*',
+            )
+          }
+        }
+      }, 100)
     }
-
+    function RandomNumber(min: number, max: number) {
+      return Math.ceil(Math.random() * (max - min)) + min
+    }
     return {
       ...toRefs(state),
-      download,
+      createImage,
       save,
       saveTemp,
       back,
       stateChange,
+      store,
     }
   },
   computed: {
