@@ -7,8 +7,6 @@ import CryptoJS from 'crypto-js'
 import { useThrottleFn } from '@vueuse/core'
 import { cloneDeep } from 'lodash-es'
 
-const fetch = axios.create()
-
 const bufferChunkSize = 5 * 1024 * 1024 // 计算哈希值时切割大小 5MB
 let saveFileQueue: (SaveFileUrlParams & { resolve; reject })[] = []
 
@@ -122,8 +120,6 @@ export default async function upload(
       const formParams = {
         // 设置对象访问权限为公共读
         'x-obs-acl': obsClient.enums.AclPublicRead,
-        // 设置对象MIME类型
-        'content-type': 'text/plain',
       }
 
       // 生成文件名
@@ -139,13 +135,13 @@ export default async function upload(
       const formData = new FormData()
       formData.append('Key', key)
       formData.append('x-obs-acl', obsClient.enums.AclPublicRead)
-      formData.append('content-type', 'text/plain')
       formData.append('policy', postSign.Policy)
       formData.append('AccessKeyId', credential.access)
       formData.append('signature', postSign.Signature)
       formData.append('x-obs-security-token', credential.securitytoken)
       formData.append('file', file)
-      return fetch({
+
+      return axios({
         url: end_point,
         data: formData,
         method: 'POST',

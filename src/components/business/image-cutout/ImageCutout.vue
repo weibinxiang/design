@@ -47,10 +47,11 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import uploader from '@/components/common/Uploader/index.vue'
 import _dl from '@/common/methods/download'
 import api from '@/api'
-import Qiniu from '@/common/methods/QiNiu'
-import _config from '@/config'
-import { getImage } from '@/common/methods/getImgDetail'
 import ImageExtraction from './ImageExtraction.vue'
+import uploadImage from '@/utils/upload'
+import dayjs from 'dayjs'
+import { randomString, base64toBlob } from '@/utils/utils'
+import { HuaweiType, FileType } from '@/api/upload'
 
 export default defineComponent({
   components: { uploader, UploadFilled, ElProgress, ImageExtraction },
@@ -69,6 +70,7 @@ export default defineComponent({
       toolModel: true,
       loading: false,
       matting: null,
+      blobImage: null,
     })
     let fileName: string = 'unknow'
     let isRuning: boolean = false
@@ -95,8 +97,10 @@ export default defineComponent({
         }
       })
       if (result.type !== 'application/json') {
-        const resultImage = URL.createObjectURL(result)
+        const resultImage = URL.createObjectURL(result.data)
         state.rawImage && (state.cutImage = resultImage)
+        state.blobImage = result.data
+
         requestAnimationFrame(run)
       } else alert('服务器繁忙，请稍等下重新尝试~')
     }
@@ -142,15 +146,12 @@ export default defineComponent({
 
     const cutDone = async () => {
       state.loading = true
-      const response = await fetch(state.cutImage)
-      const buffer = await response.arrayBuffer()
-      const file = new File([buffer], `cut_image_${Math.random()}.png`)
-      // upload
-      const qnOptions = { bucket: 'xp-design', prePath: 'user' }
-      const result = await Qiniu.upload(file, qnOptions)
-      const { width, height } = await getImage(file)
-      const url = _config.IMG_URL + result.key
-      await api.material.addMyPhoto({ width, height, url })
+      const file = new File([state.blobImage], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${state.blobImage.type?.split('/')[1]}`, { type: state.blobImage.type })
+      const url = await uploadImage(file, {
+        type: HuaweiType.other,
+        number: FileType.image,
+      })
+
       emit('done', url)
       state.show = false
       handleClose()
@@ -159,6 +160,7 @@ export default defineComponent({
     const edit = () => {
       state.matting.open(state.rawImage, state.cutImage, (base64: any) => {
         state.cutImage = base64
+        state.blobImage = base64toBlob(base64)
         state.percent = 0
         requestAnimationFrame(run)
       })

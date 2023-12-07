@@ -73,7 +73,7 @@ module.exports = {
 
       queueRun(saveScreenshot, targetUrl, { width, height, path, thumbPath, size, quality, token })
         .then(() => {
-          res.setHeader('Content-Type', 'image/jpg')
+          res.setHeader('Content-Type', 'image/png')
           // const stats = fs.statSync(path)
           // res.setHeader('Cache-Control', stats.size)
           type === 'file' ? res.sendFile(path) : res.sendFile(thumbPath)

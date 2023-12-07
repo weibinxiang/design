@@ -45,8 +45,6 @@ import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 import axios from 'axios'
 
-const fetch = axios.create()
-
 export default defineComponent({
   components: { SaveImage },
   props: ['modelValue'],
@@ -163,7 +161,7 @@ export default defineComponent({
             }
           }, 800)
           // 获取bolb文件，用于上传
-          const res = await fetch.get(`${_config.SCREEN_URL}/api/screenshots`, {
+          const res = await axios.get(`${_config.SCREEN_URL}/api/screenshots`, {
             responseType: 'blob',
             headers: {
               token: store.state.encryptionToken,
@@ -181,7 +179,7 @@ export default defineComponent({
             },
           })
           // 上传至华为云, 用于保存时回显到讲师端表单
-          const file = new File([res.data], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${res.data.type.split('/')[1]}`)
+          const file = new File([res.data], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${res.data.type.split('/')[1]}`, { type: res.data.type })
           const url = await uploadImage(file, {
             type: HuaweiType.curriculumCover,
             number: FileType.image,

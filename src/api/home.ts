@@ -17,8 +17,8 @@ export const getTempList = (params: Type.Object = {}) => fetch('/design/getDesig
 export const getTempDetail = (params: Type.Object = {}) => fetch('/design/getDesignTemplateModuleDetail', params, 'get')
 export const getCategories = (params: Type.Object = {}) => fetch('/design/getDesignCateList', params, 'get')
 // 保存模板
-export const saveTemp = (params: Type.Object = {}) => fetch('/design/editDesignTemplateModule', params, 'post')
-export const delTemp = (params: Type.Object = {}) => fetch('/design/deleteDesignTemplateModule', params, 'post')
+export const saveTemp = (data: Type.Object = {}) => fetch('/design/editDesignTemplateModule', data, 'post')
+export const delTemp = (data: Type.Object = {}) => fetch('/design/deleteDesignTemplateModule', data, 'post')
 
 // 组件相关接口
 export const getCompList = (params: Type.Object = {}) => fetch('/design/getDesignTemplateModuleList', params, 'get')
@@ -26,11 +26,11 @@ export const removeComp = (params: Type.Object = {}) => fetch('design/del', para
 // export const getCompDetail = (params: Type.Object = {}) => fetch('/api/template/temp_info', params, 'get')
 
 // 新建模板
-export const saveWorks = (params: Type.Object = {}) => fetch('/design/saveDesignTemplateModule', params, 'post')
+export const saveWorks = (data: Type.Object = {}) => fetch('/design/saveDesignTemplateModule', data, 'post')
 
 // 保存个人模板
-export const saveMyTemp = (params: Type.Object = {}) => fetch('/design/saveDesignAgentTemplate', params, 'post')
-export const editMyTemp = (params: Type.Object = {}) => fetch('/design/editDesignAgentTemplate', params, 'post')
-export const delMyTemp = (params: Type.Object = {}) => fetch('/design/deleteDesignAgentTemplate', params, 'post')
+export const saveMyTemp = (data: Type.Object = {}) => fetch('/design/saveDesignAgentTemplate', data, 'post')
+export const editMyTemp = (data: Type.Object = {}) => fetch('/design/editDesignAgentTemplate', data, 'post')
+export const delMyTemp = (data: Type.Object = {}) => fetch('/design/deleteDesignAgentTemplate', data, 'post')
 export const getMyDesign = (params: Type.Object = {}) => fetch('/design/getDesignAgentTemplateList', params, 'get')
 export const getMyDesignDetail = (params: Type.Object = {}) => fetch('/design/getDesignAgentTemplateDetail', params, 'get')

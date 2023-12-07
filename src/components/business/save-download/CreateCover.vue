@@ -42,7 +42,7 @@ export default defineComponent({
         html2canvas(document.getElementById('page-design-canvas')!, opts).then((canvas: any) => {
           canvas.toBlob(
             async (blobObj: Blob) => {
-              const file = new File([blobObj], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${blobObj.type.split('/')[1]}`)
+              const file = new File([blobObj], `${dayjs().format('YYYYMMDDHHmmss')}_${randomString(16)}.${blobObj.type.split('/')[1]}`, { type: blobObj.type })
               const result = await uploadImage(file, { type: HuaweiType.curriculumCover, number: FileType.image })
               cb(result)
             },

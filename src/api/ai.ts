@@ -5,13 +5,17 @@
  * @LastEditors: ShawnPhang <https://m.palxp.cn>
  * @LastEditTime: 2023-10-13 00:07:19
  */
-import fetch from '@/utils/axios'
+import axios from 'axios'
 
 // 上传接口
 export const upload = (file: File, cb: Function) => {
   const formData = new FormData()
   formData.append('file', file)
-  const extra = {
+
+  return axios({
+    url: 'http://192.168.5.173:5000/api/remove',
+    method: 'POST',
+    data: formData,
     responseType: 'blob',
     onUploadProgress: (progress: any) => {
       cb(Math.floor((progress.loaded / progress.total) * 100), 0)
@@ -19,6 +23,5 @@ export const upload = (file: File, cb: Function) => {
     onDownloadProgress: (progress: any) => {
       cb(100, Math.floor((progress.loaded / progress.total) * 100))
     },
-  }
-  return fetch('https://res.palxp.cn/ai/upload', formData, 'post', {}, extra)
+  })
 }

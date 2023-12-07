@@ -17,17 +17,17 @@ const API = {
   del: prefix + 'pic/del',
 }
 
-export const init = (params: Type.Object = {}) => fetch(API.init, params, 'post')
+export const init = (data: Type.Object = {}) => fetch(API.init, data, 'post')
 
 export const getPicList = (params: Type.Object = {}) => fetch(API.getList, params)
 
 export const getToken = (params: Type.Object = {}) => fetch(API.getToken, params)
 
-export const deletePic = (params: Type.Object = {}) => fetch(API.delOne, params, 'post')
+export const deletePic = (data: Type.Object = {}) => fetch(API.delOne, data, 'post')
 
-export const delPics = (params: Type.Object = {}) => fetch(API.del, params, 'post')
+export const delPics = (data: Type.Object = {}) => fetch(API.del, data, 'post')
 
-export const reName = (params: Type.Object = {}) => fetch(API.rename, params, 'post')
+export const reName = (data: Type.Object = {}) => fetch(API.rename, data, 'post')
 
 export default {
   init,
