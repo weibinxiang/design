@@ -15,6 +15,7 @@ import 'normalize.css/normalize.css'
 import '@/assets/styles/index.less'
 import elementConfig from './utils/widgets/elementConfig'
 import CryptoJS from 'crypto-js'
+import _config from '@/config'
 
 const app = createApp(App)
 
@@ -35,7 +36,7 @@ try {
     localStorage.setItem('DESIGN_INFO', JSON.stringify({ token: query.get('t') }))
   }
   const t = window.atob(decodeURIComponent(key))
-  const token = CryptoJS.AES.decrypt(t, 'O+gm1/AXCp1ERKJko3jOGw==').toString(CryptoJS.enc.Utf8)
+  const token = CryptoJS.AES.decrypt(t, _config.SIGN_KEY).toString(CryptoJS.enc.Utf8)
   store.commit('setToken', token || '')
   store.commit('setEncryptionToken', key || '')
 

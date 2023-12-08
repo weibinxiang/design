@@ -72,10 +72,10 @@ export default {
     fontSize: 24,
     zoom: 1,
     fontClass: {
-      alias: '站酷快乐体',
-      id: 543,
-      value: 'zcool-kuaile-regular',
-      url: 'https://lib.baomitu.com/fonts/zcool-kuaile/zcool-kuaile-regular.woff2',
+      alias: '阿里普惠',
+      id: 1,
+      value: 'alibaba-pu-hui-ti-75',
+      url: 'https://curriculum-design.yizhiweixin.com/font/AlibabaPuHuiTi-3-75-SemiBold.woff',
     },
     fontFamily: 'SourceHanSansSC-Regular',
     fontWeight: 'normal',
@@ -126,6 +126,7 @@ export default {
           }
           this.loading = true
           const loadFont = new window.FontFace(font.value, `url(${font.url})`)
+          console.log(loadFont)
           await loadFont.load()
           document.fonts.add(loadFont)
           this.loadFontDone = font.value

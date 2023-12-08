@@ -7,9 +7,10 @@
     "prepared": "npm i && cd screenshot && npm i",
     "serve": "npm run dev & cd screenshot && npm run dev",
     "dev": "cross-env NODE_ENV=development vite",
-    "v-build": "cross-env NODE_ENV=production && vite build",
+    "build": "cross-env NODE_ENV=production && vite build",
+    "build:test": "cross-env NODE_ENV=development && vite build",
+    "build:pre": "cross-env NODE_ENV=pre && vite build",
     "v-build-hard": "cross-env NODE_ENV=production vue-tsc --noEmit && vite build",
-    "build": "node script/set config.json && npm run v-build && sh script/reverse.sh",
     "publish": "sh script/publish.sh",
     "publish-fast": "git add . && git commit -m 'build: auto publish' && sh script/publish.sh"
   },

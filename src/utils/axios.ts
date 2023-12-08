@@ -15,8 +15,9 @@ import MD5 from 'crypto-js/md5'
 import Utf8 from 'crypto-js/enc-utf8'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
+import _config from '@/config'
 
-const signKey = 'O+gm1/AXCp1ERKJko3jOGw=='
+const signKey = _config.SIGN_KEY
 const aseKey = '12345678'
 const decrypt = CryptoJS.AES.decrypt(signKey, CryptoJS.enc.Utf8.parse(aseKey), {
   mode: CryptoJS.mode.ECB,
